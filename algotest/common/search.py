@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Callable, Tuple
+from typing import Any, Tuple
 
 
 class BinarySearch(object):
@@ -26,7 +26,7 @@ class BinarySearch(object):
         if upper_index < lower_index:
             return -1
 
-        if objective == self.items[middle_index]:
+        if (objective >= self.items[middle_index]) and (objective < self.items[middle_index + 1]):
             return middle_index
 
         return self.search(objective, lower_index, upper_index)
