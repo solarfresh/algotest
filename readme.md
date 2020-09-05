@@ -1,0 +1,1 @@
+This is a repository collecting algorithms in Python, and the source is from [labuladong](https://github.com/labuladong/fucking-algorithm) 
