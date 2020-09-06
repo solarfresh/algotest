@@ -70,3 +70,62 @@ class PathCountMatch(object):
             del self.path[self.state]
 
         return self
+
+
+class SquareSticksMatch(object):
+    def __init__(self, items: list):
+        self.items = sorted(items, key=self.comparator, reverse=True)
+        self.total = sum(items)
+        self.index = 0
+        self.path = []
+
+    def match(self):
+        if len(self.items) < 4:
+            return False
+
+        if not self.total % 4 == 0:
+            return False
+
+        square_length = self.total // 4
+
+        return self.search((square_length, square_length, square_length, square_length))
+
+    def search(self, point):
+        m, n, p, q = point
+
+        if self.index < len(self.items):
+            pick_stick_length = self.items[self.index]
+            self.index += 1
+        else:
+            return 0
+
+        if (m < 0) or (n < 0) or (p < 0) or (q < 0):
+            self.path = [(s, t, u, v) for s, t, u, v in self.path if (s >= m) and (t >= n) and (u >= p) and (v >= q)]
+            self.index = len(self.path)
+            return 0
+        else:
+            self.path.append(point)
+
+        if point in [(pick_stick_length, 0, 0, 0),
+                     (0, pick_stick_length, 0, 0),
+                     (0, 0, pick_stick_length, 0),
+                     (0, 0, 0, pick_stick_length)]:
+            self.path = [(s, t, u, v) for s, t, u, v in self.path if (s >= m) and (t >= n) and (u >= p) and (v >= q)]
+            self.index = len(self.path)
+            return 1
+
+        return self.search((m - pick_stick_length, n, p, q)) \
+            + self.search((m, n - pick_stick_length, p, q)) \
+            + self.search((m, n, p - pick_stick_length, q)) \
+            + self.search((m, n, p, q - pick_stick_length))
+
+    @staticmethod
+    def comparator(item):
+        return item
+
+
+if __name__ == '__main__':
+    # items = [1,1,2,2,2]
+    items = [3,3,3,3,4]
+    square_match = SquareSticksMatch(items)
+    print(square_match.match())
