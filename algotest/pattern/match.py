@@ -36,11 +36,20 @@ class KMP(object):
         :param txt: text content
         """
         self.txt = txt
+        self.index = []
 
-    def search(self, pat: str) -> list:
+    def find_index(self, pat: str):
         """
         :param pat: a string pattern we are interested
         :return: start index indicating the string inside text
+        """
+        return self.search(pat, 0, 0)
+
+    def search(self, pat: str, i, j) -> list:
+        """
+        :param pat: a string pattern we are interested
+        :param i: index for txt[]
+        :param j: index for pat[]
         """
 
         txt = self.txt
@@ -50,23 +59,20 @@ class KMP(object):
         # create lps[] that will hold the longest prefix suffix
         # values for pattern
         lps = self._lps(pat, pat_length)
-        i = 0  # index for txt[]
-        j = 0  # index for pat[]
-        indices = []  # matching indices
-        while i < txt_length:
-            if pat[j] == txt[i]:
-                i += 1
-                j += 1
-            elif j != 0:
-                j = lps[j - 1]
-            else:
-                i += 1
+        # indices = []  # matching indices
+        if j == pat_length:
+            self.index.append(i - j)
+            return self.search(pat, i, lps[j - 1])
 
-            if j == pat_length:
-                indices.append(i - j)
-                j = lps[j - 1]
+        if i >= txt_length:
+            return self.index
 
-        return indices
+        if pat[j] == txt[i]:
+            return self.search(pat, i+1, j+1)
+        elif j != 0:
+            return self.search(pat, i, lps[j - 1])
+        else:
+            return self.search(pat, i + 1, j)
 
     @staticmethod
     def _lps(pat: str, pat_length: int) -> list:
